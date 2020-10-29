@@ -1,8 +1,8 @@
 {
-    "name": "yidas/codeigniter-rest",
+    "name": "inbo/codeigniter-rest",
     "description": "CodeIgniter 3 RESTful API Resource Base Controller",
     "keywords": ["codeIgniter", "api", "controller", "authorization"],
-    "homepage": "https://github.com/yidas/codeigniter-rest",
+    "homepage": "https://inbo.ir",
     "type": "library",
     "license": "MIT",
     "support": {
