@@ -6,6 +6,7 @@ use Firebase\JWT\JWT;
 use yidas\http\Request;
 use yidas\http\Response;
 
+
 /**
  * RESTful API Controller
  *
@@ -28,7 +29,8 @@ use yidas\http\Response;
  */
 class Controller extends \MY_Controller
 {
-    const JWT_SECRET_KEY = "8dc2d81404c4ca0ba23b85b941696534";
+    const JWT_SECRET_KEY = JWT_TOKEN;
+
     /**
      * RESTful API resource routes
      *
@@ -93,7 +95,6 @@ class Controller extends \MY_Controller
         $this->request = new Request;
         // Response initialization
         $this->response = new Response;
-
         // Response setting
         if ($this->format) {
             $this->response->setFormat($this->format);
@@ -123,6 +124,7 @@ class Controller extends \MY_Controller
                 if (!$resourceID) {
                     return $this->_defaultAction();
                 }
+                break;
             case 'PUT':
                 return $this->_action(['update', $resourceID, $this->request->getBodyParams()]);
                 break;
@@ -370,12 +372,7 @@ class Controller extends \MY_Controller
     public function throwError(int $statusCode, string $message)
     {
         header('Content-Type: application/json');
-        $data = [
-            'error' => [
-                'status' => $statusCode,
-                'message' => $message,
-            ],
-        ];
+        $data = ['message' => $message];
         $http = [
             100 => '100 Continue',
             101 => '101 Switching Protocols',
@@ -422,20 +419,19 @@ class Controller extends \MY_Controller
         die;
     }
 
-    public function generateToken($user)
+    public function generateToken($user): string
     {
         try {
-            $token = JWT::encode([
+            return JWT::encode([
                 'iat' => time(),
                 'iss' => 'localhost',
                 'exp' => time() + 60 * 60 * 60,
                 'userId' => $user->id
             ], self::JWT_SECRET_KEY);
-
         } catch (\Exception $e) {
             $this->throwError(500, 'Token Not Generate Please Try Again');
         }
-        return $token;
+
     }
 
     public function getPayload()
