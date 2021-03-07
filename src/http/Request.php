@@ -4,7 +4,7 @@ namespace yidas\http;
 
 /**
  * Request Component
- * 
+ *
  * @author  Nick Tsai <myintaer@gmail.com>
  * @since   1.7.0
  * @todo    Psr\Http\Message\RequestInterface
@@ -20,7 +20,7 @@ class Request
      * @var array Body params
      */
     private $_bodyParams;
-    
+
     /**
      * Retrieves the HTTP method of the request.
      *
@@ -43,7 +43,7 @@ class Request
      * contained in [[getRawBody()]] or, in the case of the HEAD method, the
      * media type that would have been sent had the request been a GET.
      * For the MIME-types the user expects in response, see [[acceptableContentTypes]].
-     * 
+     *
      * @return string request content-type. Null is returned if this information is not available.
      * @link https://tools.ietf.org/html/rfc2616#section-14.17
      * HTTP 1.1 header field definitions
@@ -71,17 +71,17 @@ class Request
      * Request parameters are determined using the parsers depended on [[contentType]].
      * If no parsers are configured for the current [[contentType]] it uses the PHP function `mb_parse_str()`
      * to parse the [[rawBody|request body]].
-     * 
+     *
      * @todo   Cache
      * @return array the request parameters given in the request body.
      */
     public function getBodyParams()
     {
         if ($this->_bodyParams === null) {
-        
+
             $contentType = $this->getContentType();
 
-            if (strcasecmp($contentType, 'application/json') == 0) {
+            if (strpos($contentType, 'application/json') !== false) {
                 // JSON content type
                 $this->_bodyParams = json_decode($this->getRawBody());
             } elseif ($this->getMethod() === 'POST') {
@@ -103,39 +103,39 @@ class Request
     {
         return $this->getBodyParams();
     }
-    
+
     /**
-     * Get Credentials with HTTP Basic Authentication 
+     * Get Credentials with HTTP Basic Authentication
      *
      * @return array that contains exactly two elements:
      * - 0: the username sent via HTTP authentication, `null` if the username is not given
      * - 1: the password sent via HTTP authentication, `null` if the password is not given
-     * 
+     *
      * @example
      *  list($username, $password) = $request->getAuthCredentialsWithBasic();
      */
     public function getAuthCredentialsWithBasic()
     {
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-            
+
             return [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']];
-        } 
-        
+        }
+
         $authToken = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
-        $authToken = (!$authToken && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) 
-            ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] 
+        $authToken = (!$authToken && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
+            ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
             : $authToken;
-        
+
         if ($authToken !== null && strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']), 'basic ')===0) {
-            
+
             $parts = array_map(function ($value) {
                 return strlen($value) === 0 ? null : $value;
             }, explode(':', base64_decode(mb_substr($authToken, 6)), 2));
-            
+
             if (count($parts) < 2) {
                 return [$parts[0], null];
             }
-            
+
             return $parts;
         }
 
