@@ -314,7 +314,7 @@ class Controller extends \MY_Controller
 
     public function validateRequestPost()
     {
-        if ($_SERVER['CONTENT_TYPE'] != 'application/json') {
+        if (strpos($_SERVER['CONTENT_TYPE'] ,'application/json') === false) {
             $this->throwError(403, 'The only acceptable content type is application/json.');
         }
     }
