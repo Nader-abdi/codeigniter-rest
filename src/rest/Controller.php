@@ -443,7 +443,7 @@ class Controller extends \MY_Controller
         try {
             $payload = JWT::decode($bearer, self::JWT_SECRET_KEY, ['HS256']);
         }catch (\Exception $e){
-            $this->throwError(401, 'Invalid Token');
+            $this->throwError(440, 'Invalid Token');
         }
 
         return $payload;
@@ -451,7 +451,7 @@ class Controller extends \MY_Controller
     }
     public function checkTokenExpire($tokenTime , $changeTime){
         if ($tokenTime < strtotime($changeTime)){
-            $this->throwError(401, 'Expire token');
+            $this->throwError(440, 'Expire token');
         }
     }
 }
