@@ -425,7 +425,7 @@ class Controller extends \MY_Controller
             return JWT::encode([
                 'iat' => time(),
                 'iss' => 'localhost',
-                'exp' => time() + 60 * 60 * 60,
+                'exp' => time() + 3600 * 60 * 60,
                 'userId' => $user->id
             ], self::JWT_SECRET_KEY);
         } catch (\Exception $e) {
